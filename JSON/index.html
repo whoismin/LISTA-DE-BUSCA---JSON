@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdn.lordicon.com/lordicon.js"></script>
+    <title>Lista de Busca em JSON</title>
+    <script src="funcoes.js"></script>
+    <link href="style.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: rgb(243, 180, 222);
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background-color: #e477d2; /* Adjust the color as needed */
+            padding: 15px;
+            text-align: center;
+        }
+
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+            padding: 14px 16px;
+            display: inline-block;
+        }
+
+        .navbar a:hover {
+            background-color: #f783ca; /* Adjust the hover color as needed */
+        }
+
+        .form {
+            max-width: 400px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .form label {
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .form input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+        }
+
+        .form .button {
+            background-color: #b92995; /* Adjust the hover color as needed */
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form .button:hover {
+            background-color: #d173b9; /* Adjust the hover color as needed */
+        }
+
+        .row-filter {
+            text-align: center;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            max-width: 600px; /* Adjust the maximum width as needed */
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+
+        th {
+            background-color: rgb(230, 115, 182);
+        }
+    </style>
+</head>
+<body>
+
+
+<div class="form">
+    <form class="titulo" id="Buscar">
+        <label for="marca">Busque a marca desejada</label>
+        <input type="text" id="marca" name="marca">
+        <input type="submit" class="button" value="Pesquisar">
+        <button type="button" class="button" onclick="limparPesquisa()">Limpar Pesquisa</button>
+    </form>
+</div>
+
+<div class="row-filter" data-aos="fade-up">
+    <table id="dataTable">
+        <thead>
+            <tr>
+                <th scope="col">Marca</th>
+                <th scope="col">Carro</th>
+                <th scope="col">Camber Dianteiro Mínimo</th>
+                <th scope="col">Camber Dianteiro Máximo</th>
+                <th scope="col">Caster Dianteiro Mínimo</th>
+                <th scope="col">Caster Dianteiro Máximo</th>
+                <th scope="col">Convergência Dianteira Mínimo</th>
+                <th scope="col">Convergência Dianteira Máximo</th>
+                <th scope="col">Camber Traseiro Mínimo</th>
+                <th scope="col">Camber Traseiro Máximo</th>
+                <th scope="col">Convergência Dianteira Mínimo</th>
+                <th scope="col">Convergência Dianteira Máximo</th>     
+                <!-- Add more headers as needed -->
+            </tr>
+        </thead>
+        <tbody id="TableData">
+            <!-- Data will be dynamically inserted here -->
+        </tbody>
+    </table>
+</div>
+
+<script>
+    $(document).ready(function () {
+        // Initial data loading
+        loadTableData();
+
+        // Submit form event
+        $("#Buscar").submit(function (event) {
+            event.preventDefault();
+            var marca = $("#marca").val();
+            filterAndDisplayData(marca);
+        });
+    });
+
+    // Function to load table data initially and on reset
+    function loadTableData() {
+        $.getJSON("automoveis.json", function (data) {
+            displayData(data);
+        });
+    }
+
+    // Function to filter and display data
+    function filterAndDisplayData(marca) {
+        $.getJSON("automoveis.json", function (data) {
+            displayData(data, marca);
+        });
+    }
+
+    // Function to reset the table to its initial state
+    function resetTable() {
+        loadTableData();
+    }
+
+    // Function to display data in the table
+    function displayData(data, marcaFilter) {
+        $("#TableData").empty();  // Clear the table
+
+        data['automoveis'].forEach(function (automovel) {
+            if (!marcaFilter || automovel['MARCA'].includes(marcaFilter)) {
+                $("#TableData").append("<tr>");
+
+                for (var prop in automovel) {
+                    $("#TableData").append("<td scope='col'>" + automovel[prop] + "</td>");
+                }
+                $("#TableData").append("</tr>");
+            }
+        });
+    }
+
+    // Function to reset the table when clicking "Limpar Pesquisa"
+    function limparPesquisa() {
+        $("#marca").val("");
+        resetTable();
+    }
+</script>
+
+
+</body>
+</html>
